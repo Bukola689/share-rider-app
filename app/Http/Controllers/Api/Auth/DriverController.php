@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Driver;
 use App\Notifications\LoginNeedsVerification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\Request;
