@@ -14,13 +14,18 @@ class TripLocationUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $trip;
+
+    private $user;
+
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(Trip $trip, User $user)
     {
-        //
-    }
+        $this->trip = $trip;
+        $this->user = $user;
+    }   
 
     /**
      * Get the channels the event should broadcast on.
@@ -30,7 +35,7 @@ class TripLocationUpdated
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new Channel('passanger_'. $this->user->id),
         ];
     }
 }
