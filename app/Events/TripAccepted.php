@@ -14,12 +14,14 @@ class TripAccepted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $trip;
+
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(Trip $trip)
     {
-        //
+        $this->trip = $trip;
     }
 
     /**
