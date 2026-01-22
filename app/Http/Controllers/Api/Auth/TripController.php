@@ -64,7 +64,9 @@ class TripController extends Controller
 
          $trip->load('driver.user');
 
-         TripAccepted::dispatch($trip);
+         // Dispatch an event
+
+         TripAccepted::dispatch($trip, $request->user());
 
          return $trip;
     }
@@ -79,6 +81,8 @@ class TripController extends Controller
 
         $trio->load('driver.user');
 
+        TripStarted::dispatch($trip, $request->user());
+
         return $trip;
     }
 
@@ -91,6 +95,8 @@ class TripController extends Controller
         ]);
 
         $trio->load('driver.user');
+
+        TripEnded::dispatch($trip, $request->user());
 
         return $trip;
     }
@@ -111,7 +117,9 @@ class TripController extends Controller
 
         //load relation between user driver
 
-        $trio->load('driver.user');
+        $trip->load('driver.user');
+
+        TripLocationUpdated::dispatch($trip, $request->user());
 
         return $trip;
     }

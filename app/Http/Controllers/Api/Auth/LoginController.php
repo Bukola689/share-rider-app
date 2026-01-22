@@ -30,7 +30,7 @@ class LoginController extends Controller
 
         // send use a one time code
 
-        //$user->notify(new LoginNeedsVerification());
+        $user->notify(new LoginNeedsVerification());
 
         //return back a response
 
