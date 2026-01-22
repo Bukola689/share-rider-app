@@ -36,7 +36,7 @@ class TripAccepted
     public function broadcastOn(): array
     {
         return [
-            new Channel('passanger_'. $this->user_id),
+            new Channel('passanger_'. $this->user->id),
         ];
     }
 }
