@@ -14,12 +14,17 @@ class TripStarted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $trip;
+
+    private $user;
+
     /**
      * Create a new event instance.
      */
     public function __construct()
     {
-        //
+        $this->trip = $trip;
+        $this->user = $user;
     }
 
     /**
@@ -30,7 +35,7 @@ class TripStarted
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new Channel('passanger_'. $this->user->id),
         ];
     }
 }
