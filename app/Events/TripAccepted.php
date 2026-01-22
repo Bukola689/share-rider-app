@@ -16,7 +16,7 @@ class TripAccepted
 
     public $trip;
 
-    public $user;
+    private $user;
 
     /**
      * Create a new event instance.
