@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('drives', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
-            $table->integer('year');
+            $table->foreignId('user_id')
+                 ->constrained()
+                  ->cascadeOnDelete();
+            $table->year('year');
             $table->string('make');
             $table->string('model');
-            $table->integer('color');
-            $table->integer('license_plate');
+            $table->string('color');
+            $table->string('license_plate');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('drives');
+        Schema::dropIfExists('drivers');
     }
 };

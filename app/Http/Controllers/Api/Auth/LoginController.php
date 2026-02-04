@@ -4,69 +4,79 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\TermiiSmsService;
 use App\Notifications\LoginNeedsVerification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-     public function submit(Request $request)
+     public function submit(Request $request, TermiiSmsService $termii)
     {
-        // validate login details
-
-         $request->validate([
+        $request->validate([
             'phone' => 'required|numeric|min:10',
         ]);
 
-        // find or create a new user deatils
-
+        // Find or create the user
         $user = User::firstOrCreate([
-             'phone' => $request->phone
+            'phone' => $request->phone,
         ]);
 
-        if (!$user) {
-            return response()->json(['message' => 'Could not proceess user with that Phone number.'], 401);
-        }
+        // Generate a 6-digit OTP
+        $code = random_int(111111, 999999);
 
-        // send use a one time code
-
-        $user->notify(new LoginNeedsVerification());
-
-        //return back a response
-
-        return response()->json([
-            'message' => 'Text Message Notification Sent !!!'
+        // Save OTP (hashed for security)
+        $user->update([
+            'login_code' => $code,
         ]);
+
+        // Send OTP via Termii notification
+
+        $user->notify(new LoginNeedsVerification($code));
+
+        $response = [
+            'user'=>$user,
+
+            'message' => 'Verification code sent via SMS.',
+        ];
+
+        return response($response, 201);
     }
 
     public function verify(Request $request)
     {
-        // validate the incoming request
+        // validate the phone number and login_code
 
          $request->validate([
             'phone' => 'required|numeric|min:10',
-            'login_code' => 'required|numeric|between:111111,999999',
+            'login_code' => 'required|numeric|digits:6',
         ]);
 
-        // find user
+        // check for user and login)code
 
-        $user = User::where('phone', $request->phone)->where('login_code', $request->login_code)->first();
+        $user = User::where('phone', $request->phone)
+            ->where('login_code', $request->login_code)
+            ->first();
 
-        // is the code provided the same one saved
+        // check if user exist or not
 
-        // if so return back on auth token
-
-        if ($user) {
-
-            $user->update([
-                'login_code' => null
-            ]);
-
-            return $user->createToken($request->login_code)->plaintextToken;
+        if (! $user) {
+            return response()->json([
+                'message' => 'Invalid verification code'
+            ], 422);
         }
 
-        // if not return back a error message.
+        // update login_code for user
 
-        return response()->json(['message' => 'Invalid Verification Code']);
+        $user->update([
+            'login_code' => null,
+        ]);
+
+        return response()->json([
+            'token' => $user->createToken('auth')->plainTextToken,
+            'user' => $user,
+            'message' => 'Login successful',
+        ]);
+
     }
 }

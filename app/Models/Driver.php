@@ -11,9 +11,15 @@ class Driver extends Model
 
      protected $guarded = [];
 
-    // protected $fillable = [
-    //     'year'
-    // ]
+    protected $fillable = [
+        'year',
+        'make',
+        'model',
+        'color',
+        'license_plate',
+        'name',
+        'user_id'
+    ];
 
     public function user()
     {

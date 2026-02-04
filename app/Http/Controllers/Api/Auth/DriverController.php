@@ -22,37 +22,39 @@ class DriverController extends Controller
         return $user;
     }
 
-    public function update(Request $request)
-    {
-        // first Validate the Driver
+   public function update(Request $request)
+   {
+    
+    $request->validate([
+        'year' => 'required|numeric|between:2010,2024',
+        'make' => 'required',
+        'model' => 'required',
+        'color' => 'required',
+        'license_plate' => 'required',
+        'name' => 'required'
+    ]);
 
-        $request->validate([
-            'year' => 'required|numeric|between:2010,2024',
-            'make' => 'required',
-            'model' => 'required',
-            'color' => 'required|alpha',
-            'license)plate' => 'required',
-            'name' => 'required'
-        ]);
+    $user = $request->user();
 
-        $user = $request->user();
-
-        // update driver name only
-
-        $user->update($request->only('name'));
-
-        //create or update a driver associated with this user
-
-        $user->driver()->update->updateOrCreate($request->only([
-            'year',
-            'make',
-            'model',
-            'color',
-            'license_plate'
-        ]));
-
-        $user->load('driver');
-
-        return $user;
+    // Safety check
+    if (! $user) {
+        return response()->json(['message' => 'Unauthenticated'], 401);
     }
+
+    dd($user);
+
+    // Update user name
+    $user->update($request->only('name'));
+
+    // Create or update driver
+    $driver = $user->driver()->updateOrCreate($request->only(['year', 'make', 'model', 'color', 'license_plate']));
+
+    dd($drive);
+
+    return response()->json(['message' => 'Driver information updated successfully.']);
+
+    // return response()->json(
+    //     $user->load('driver')
+    // );
+  }
 }

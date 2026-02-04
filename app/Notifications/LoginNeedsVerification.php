@@ -4,8 +4,14 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use NotificationChannels\Twilio\TwilioChannel;
-use NotificationChannels\Twilio\TwilioSmsMessage;
+use Twilio\Rest\Client;
+use App\Models\User;
+use App\Services\TermiiSmsService;
+use App\Notifications\Channels\TermiiChannel;
+use Illuminate\Notifications\Messages\NexmoMessage;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Notifications\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -16,7 +22,7 @@ class LoginNeedsVerification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(private string $code)
     {
         //
     }
@@ -28,22 +34,18 @@ class LoginNeedsVerification extends Notification
      */
     public function via(object $notifiable): array
     {
-       return [TwilioChannel::class];
+       return [TermiiChannel::class];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toTwilio($notifiable)
+    public function toTermii($notifiable)
     {
-        $loginCode = rand(111111, 999999);
-
-        $notifiable->update([
-            'login_code' => $loginCode
-        ]);
-
-        return (new TwilioSmsMessage())
-               ->content("Your Andrewbar Login Code Is {$loginCode}, Dont share this with anyone");
+        return [
+            'phone' => $notifiable->phone,
+            'message' => "Your login OTP is {$this->code}",
+        ];
     }
 
     /**
