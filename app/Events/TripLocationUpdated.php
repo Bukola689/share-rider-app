@@ -38,4 +38,10 @@ class TripLocationUpdated
             new Channel('passanger_'. $this->user->id),
         ];
     }
+
+        public function broadcastAs()
+        {
+            return 'trip.location.updated';
+        }
+
 }
