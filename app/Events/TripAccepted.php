@@ -3,6 +3,8 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
+use App\Models\Trip;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -38,5 +40,10 @@ class TripAccepted
         return [
             new Channel('passanger_'. $this->user->id),
         ];
+    }
+
+      public function broadcastAs()
+    {
+        return 'trip.accepted';
     }
 }
