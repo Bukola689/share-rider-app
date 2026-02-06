@@ -41,4 +41,11 @@ class TripEnded
            new Channel('passanger_'. $this->user->id),
         ];
     }
+
+    //Driver will listen to this event to know when the trip has ended
+
+     public function broadcastAs()
+    {
+        return 'trip.ended';
+    }
 }
