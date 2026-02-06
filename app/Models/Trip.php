@@ -11,7 +11,20 @@ class Trip extends Model
 
      protected $guarded = [];
 
-     protected $cast = [
+     protected $table = 'trips';
+
+     protected $fillable = [
+        'origin',
+        'destination',
+        'destination_name',
+        'user_id',
+        'driver_id',
+        'driver_location',
+        'is_started',
+        'is_complete'
+     ];
+
+     protected $casts = [
         'origin' => 'array',
         'destination' => 'array',
         'driver_location' => 'array',

@@ -18,8 +18,9 @@ return new class extends Migration
              $table->foreignId('user_id')
                  ->constrained()
                   ->cascadeOnDelete();
-            $table->foreignId('driver_id')
-                 ->constrained();
+            $table->unsignedBigInteger('driver_id')
+                  ->nullable()
+                  ->change();
             $table->boolean('is_started')->default(false);
             $table->boolean('is_completed')->default(false);
             $table->json('origin')->nullable();

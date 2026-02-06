@@ -31,7 +31,7 @@ class DriverController extends Controller
         'model' => 'required',
         'color' => 'required',
         'license_plate' => 'required',
-        'name' => 'required'
+        
     ]);
 
     $user = $request->user();
@@ -41,20 +41,13 @@ class DriverController extends Controller
         return response()->json(['message' => 'Unauthenticated'], 401);
     }
 
-    dd($user);
-
-    // Update user name
-    $user->update($request->only('name'));
-
     // Create or update driver
-    $driver = $user->driver()->updateOrCreate($request->only(['year', 'make', 'model', 'color', 'license_plate']));
+     $user->driver()->updateOrCreate($request->only(['year', 'make', 'model', 'color', 'license_plate', 'name']));
 
-    dd($drive);
+   // return response()->json(['message' => 'Driver information updated successfully.']);
 
-    return response()->json(['message' => 'Driver information updated successfully.']);
-
-    // return response()->json(
-    //     $user->load('driver')
-    // );
+    return response()->json(
+        $user->load('driver')
+    );
   }
 }
